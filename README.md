@@ -204,11 +204,3 @@ The TDS sensor uses a simple **two-point** calibration: distilled water (0 ppm) 
 ## Author
 
 **Ionuț Ionescu** — [GitHub](https://github.com/ionescuionut1708) · [LinkedIn](https://www.linkedin.com/in/ionut1708)
-
-## Background
-
-Originally developed as an academic control-systems project (Automatic Control and Applied Informatics, UNSTPB). *Feel free to edit or remove this section.*
-
-## License
-
-Released under the **MIT License** — add a `LICENSE` file to the repository. *(MIT is a suggestion; choose whichever license you prefer.)*
