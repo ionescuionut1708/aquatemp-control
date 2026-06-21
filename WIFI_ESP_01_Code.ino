@@ -10,22 +10,19 @@ AsyncEventSource events("/events");
 
 String inputString = "";
 boolean stringComplete = false;
-
 float temperature;
 float tdsValue;
 float temperaturePercentage;
 float pwmValue;
-float setpoint = 25.0; // Valoare implicită
+float setpoint = 25.0;
 
 void setup() {
   Serial.begin(115200);
-  
   WiFi.softAP(ssid, password);
-  
   IPAddress IP = WiFi.softAPIP();
   Serial.print("Adresa IP a AP: ");
   Serial.println(IP);
-  
+
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send(200, "text/html", generateWebPage());
   });
@@ -34,18 +31,18 @@ void setup() {
     if (request->hasParam("temperature")) {
       setpoint = request->getParam("temperature")->value().toFloat();
       Serial.println(setpoint);
-      request->send(200, "text/plain", "Temperatura de referință trimisă cu succes!");
+      request->send(200, "text/plain", "succes!");
     }
   });
-  
+
   events.onConnect([](AsyncEventSourceClient *client){
-    if(client->lastId()){
-      Serial.printf("Client reconectat! Ultimul ID de mesaj recepționat: %u\n", client->lastId());
+    if (client->lastId()) {
+      Serial.printf(" \n", client->lastId());
     }
-    client->send(generateSensorData().c_str(),"new_readings",millis());
+    client->send(generateSensorData().c_str(), "new_readings", millis());
   });
+
   server.addHandler(&events);
-  
   server.begin();
 }
 
@@ -55,12 +52,13 @@ void loop() {
     int commaIndex1 = inputString.indexOf(',');
     int commaIndex2 = inputString.indexOf(',', commaIndex1 + 1);
     int commaIndex3 = inputString.indexOf(',', commaIndex2 + 1);
+
     if (commaIndex1 != -1 && commaIndex2 != -1 && commaIndex3 != -1) {
       temperature = inputString.substring(0, commaIndex1).toFloat();
       tdsValue = inputString.substring(commaIndex1 + 1, commaIndex2).toFloat();
       temperaturePercentage = inputString.substring(commaIndex2 + 1, commaIndex3).toFloat();
       pwmValue = inputString.substring(commaIndex3 + 1).toFloat();
-      events.send(generateSensorData().c_str(),"new_readings",millis());
+      events.send(generateSensorData().c_str(), "new_readings", millis());
     }
   }
 
@@ -99,10 +97,10 @@ String generateWebPage() {
   webpage += ".sensor { color:white; font-weight: bold; background-color: #bcbcbc; padding: 1px; }";
   webpage += "</style>";
   webpage += "<script>";
-  webpage += "console.log('Chart.js loaded:', typeof Chart !== 'undefined');"; // Verificare încărcare Chart.js
+  webpage += "console.log('Chart.js loaded:', typeof Chart !== 'undefined');";  // Debug message
   webpage += "var chart;";
   webpage += "function initChart() {";
-  webpage += "  console.log('Initializing chart...');"; // Mesaj de depanare
+  webpage += "  console.log('Initializing chart...');";  // Debug message
   webpage += "  var ctx = document.getElementById('myChart').getContext('2d');";
   webpage += "  chart = new Chart(ctx, {";
   webpage += "    type: 'line',";
@@ -127,11 +125,11 @@ String generateWebPage() {
   webpage += "      }";
   webpage += "    }";
   webpage += "  });";
-  webpage += "  console.log('Chart initialized');"; // Mesaj de depanare
+  webpage += "  console.log('Chart initialized');";  // Debug message
   webpage += "}";
   webpage += "var source = new EventSource('/events');";
   webpage += "source.addEventListener('new_readings', function(e) {";
-  webpage += "  console.log(\"New readings!\", e.data);"; // Mesaj de depanare
+  webpage += "  console.log(\"New readings!\", e.data);";  // Debug message
   webpage += "  var data = JSON.parse(e.data);";
   webpage += "  document.getElementById(\"temperatureValue\").innerHTML = data.temperature.toFixed(2);";
   webpage += "  document.getElementById(\"tdsValue\").innerHTML = data.tdsValue.toFixed(0);";
@@ -148,9 +146,9 @@ String generateWebPage() {
   webpage += "      chart.data.datasets[1].data.shift();";
   webpage += "    }";
   webpage += "    chart.update();";
-  webpage += "    console.log('Chart updated');"; // Mesaj de depanare
+  webpage += "    console.log('Chart updated');";  // Debug message
   webpage += "  } else {";
-  webpage += "    console.log('Chart not initialized');"; // Mesaj de depanare
+  webpage += "    console.log('Chart not initialized');";  // Debug message
   webpage += "  }";
   webpage += "}, false);";
   webpage += "function sendTemperature() {";
